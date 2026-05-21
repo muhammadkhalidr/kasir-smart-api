@@ -1,5 +1,5 @@
 {
-    "name": "khalid/kasir-smart-api",
+    "name": "khalid-r/kasir-smart-api",
     "description": "AI-Powered Smart API for Kasir Percetakan - enables intelligent product search, AI chatbot integration, and smart price calculation for any Laravel-based Kasir Percetakan project.",
     "version": "1.2.0",
     "type": "library",
