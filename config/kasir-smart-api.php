@@ -3,12 +3,21 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | API Key Autentikasi
+    | API Key Autentikasi Internal (Untuk akses endpoint)
     |--------------------------------------------------------------------------
     | API Key yang harus disertakan client pada header X-API-Key.
     | Setel via .env: EXTERNAL_API_KEY=xxxxxxxx
     */
     'api_key' => env('EXTERNAL_API_KEY', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | DEEPSEEK API Key (NLP Router)
+    |--------------------------------------------------------------------------
+    | Key untuk mengekstrak intent dan dimensi ukuran otomatis via DeepSeek LLM.
+    | Setel via .env: DEEPSEEK_API_KEY=sk-xxxxxx
+    */
+    'deepseek_api_key' => env('DEEPSEEK_API_KEY', null),
 
     /*
     |--------------------------------------------------------------------------

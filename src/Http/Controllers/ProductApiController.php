@@ -94,7 +94,7 @@ class ProductApiController extends Controller
 
             $aiRules = ['ai_rules' => [
                 'RULE_1' => 'Hanya rekomendasikan produk yang category_id-nya sesuai dengan jenis produk yang ditanyakan pelanggan.',
-                'RULE_2' => 'Untuk SPANDUK/BANNER → HANYA category_id=1 (Outdoor). JANGAN rekomendasikan Indoor/ALBATROS.',
+                'RULE_2' => 'Untuk SPANDUK/BANNER → HANYA category_id=1 (Outdoor).',
                 'RULE_3' => 'Untuk X-BANNER/ROLL BANNER/STEMPEL/ID CARD → HANYA category_id=6 (Custom).',
                 'RULE_4' => 'Untuk FOTO/ALBATROS/LAMINASI/SCOUTLITE → HANYA category_id=2 (Indoor).',
                 'RULE_5' => 'Untuk AKRILIK/SABLON → HANYA category_id=7 (Akrilik). Harga per cm2.',

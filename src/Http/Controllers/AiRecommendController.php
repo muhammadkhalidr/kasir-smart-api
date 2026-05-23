@@ -261,8 +261,9 @@ class AiRecommendController extends Controller
 
         try {
             $msgLower   = mb_strtolower($message);
-            $productKey = $this->detectProductKey($msgLower);
-            $dimensions = $this->extractDimensions($msgLower);
+            $extracted  = $this->extractIntentWithLLM($msgLower);
+            $productKey = $extracted['intent'];
+            $dimensions = $extracted['dimensions'];
             $products   = $this->getProducts($productKey);
 
             if (empty($products)) {
@@ -299,7 +300,90 @@ class AiRecommendController extends Controller
     }
 
     // ===================================================================
-    // PRIVATE: Deteksi Jenis Produk dari Pesan
+    // PRIVATE: Ekstraksi Entitas & Dimensi via LLM (Lebih Pintar)
+    // ===================================================================
+    private function extractIntentWithLLM(string $message): array
+    {
+        $deepseekKey = config('kasir-smart-api.deepseek_api_key');
+
+        if (!$deepseekKey) {
+            // Fallback ke Regex lama jika belum diset
+            return [
+                'intent'     => $this->detectProductKey($message),
+                'dimensions' => $this->extractDimensions($message)
+            ];
+        }
+
+        $prompt = "Ekstrak informasi dari keluhan/permintaan chat pelanggan percetakan ini ke format JSON murni.\n"
+                . "1. 'intent': pilih salah SATU kata dari: [spanduk, backlite, umbul, sticker_outdoor, x_banner, roll_banner, stempel, id_card, plakat, neon_box, albatros, indoor, laminasi, foto, kartu_nama, brosur, nota, akrilik, mug, kaos, undangan]. Jika tidak ada yang cocok, isi null.\n"
+                . "2. 'w': float atau integer (lebar produk). Jika tidak ada angka, isi null.\n"
+                . "3. 'h': float atau integer (tinggi produk). Jika tidak ada, isi null.\n"
+                . "4. 'unit': 'm' (meter) atau 'cm' (centimeter). Jika tidak ada, isi null.\n\n"
+                . "Pesan pelanggan: \"{$message}\"\n\n"
+                . "Format Output JSON (Wajib valid JSON, jangan tambah markdown):\n"
+                . '{"intent":"X", "w":Y, "h":Z, "unit":"U"}';
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withToken($deepseekKey)
+                ->timeout(10)
+                ->post('https://api.deepseek.com/chat/completions', [
+                    'model' => 'deepseek-v4-flash',
+                    'messages' => [
+                        ['role' => 'system', 'content' => 'You are a JSON formatting assistant. Always output valid JSON only.'],
+                        ['role' => 'user', 'content' => $prompt]
+                    ],
+                    'response_format' => ['type' => 'json_object'],
+                    'temperature' => 0.1
+                ]);
+
+            if ($response->successful()) {
+                $jsonStr = $response->json('choices.0.message.content');
+                $data = json_decode($jsonStr, true);
+                
+                $intent = $data['intent'];
+                // Sanitize LLM hallucinated intents
+                if (!array_key_exists($intent, self::FEATURED_PRODUCTS) && $intent !== null) {
+                    $intent = $this->detectProductKey($intent);
+                }
+                if ($intent === null) {
+                    $intent = $this->detectProductKey($message);
+                }
+
+                $dims = null;
+                if (isset($data['w'], $data['h'], $data['unit']) && $data['w'] !== null && $data['h'] !== null) {
+                    $w = (float) $data['w'];
+                    $h = (float) $data['h'];
+                    $unitStr = strtolower($data['unit']) === 'm' ? 'meter' : 'cm';
+                    $dims = [
+                        'width' => $w,
+                        'height' => $h,
+                        'unit' => $unitStr,
+                        'area_m2' => $unitStr === 'meter' ? round($w * $h, 2) : round(($w/100)*($h/100), 2),
+                        'area_cm2' => $unitStr === 'cm' ? round($w * $h, 0) : round($w*100*$h*100, 0),
+                        'display' => "{$w} × {$h} {$unitStr}",
+                    ];
+                }
+                
+                // Fallback to regex dimension if LLM failed to extract dimensions
+                if (!$dims) {
+                    $dims = $this->extractDimensions($message);
+                }
+
+                return ['intent' => $intent, 'dimensions' => $dims];
+            }
+        } catch (\Throwable $e) {
+            Log::error('DeepSeek LLM Extraction Failed: ' . $e->getMessage());
+        }
+
+        return [
+            'intent'     => $this->detectProductKey($message),
+            'dimensions' => $this->extractDimensions($message)
+        ];
+    }
+
+    // ===================================================================
+    // PRIVATE: Deteksi Jenis Produk dari Pesan (Legacy / Regex)
+    // ===================================================================
     // ===================================================================
     private function detectProductKey(string $message): ?string
     {
@@ -445,7 +529,7 @@ class AiRecommendController extends Controller
              . "Harga dihitung {$priceLabel}.\n\n"
              . "{$calcInfo}\n"
              . "ATURAN KETAT:\n"
-             . "- JANGAN menyebut ALBATROS, Cetak Indoor, atau produk Indoor lain untuk pertanyaan {$catName}.\n"
+             . "- PASTIKAN HANYA menawarkan produk dari daftar yang disebutkan di atas.\n"
              . "- Sebutkan nama produk asli dari daftar di atas (misal: Spanduk Glossy 280 Gsm, bukan sekadar spanduk).\n"
              . "- Jika ada kalkulasi harga di atas, gunakan angka tersebut langsung. Jangan buat kalkulasi sendiri.\n"
              . "- Berikan pilihan produk sesuai kebutuhan: ekonomis vs premium.";
