@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation &mdash; Kasir Percetakan</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#475569',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .endpoint-card {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .endpoint-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .method-badge-get {
+            @apply bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm font-semibold;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased selection:bg-blue-200">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div>
+                <h1
+                    class="text-xl font-bold border-l-4 border-blue-600 pl-3 leading-tight tracking-tight text-gray-900">
+                    API Docs <span class="text-blue-600">v1.2</span></h1>
+                <p class="text-sm text-gray-500 pl-3 mt-1">Kasir Percetakan</p>
+            </div>
+            <a href="#endpoints"
+                class="hidden sm:inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">Lihat
+                Endpoint</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 flex flex-col md:flex-row gap-8">
+
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-full md:w-64 shrink-0 hidden md:block">
+            <div class="sticky top-28 bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Navigasi</h3>
+                <nav class="space-y-1">
+                    <a href="#intro"
+                        class="block py-2 px-3 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md">Informasi
+                        Dasar</a>
+                    <a href="#auth"
+                        class="block py-2 px-3 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md">Autentikasi</a>
+                    <a href="#response"
+                        class="block py-2 px-3 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md">Struktur
+                        Response</a>
+                    <a href="#rate-limit"
+                        class="block py-2 px-3 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md">Rate
+                        Limiting</a>
+                    <div class="pt-2 pb-1">
+                        <span class="px-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Endpoints</span>
+                    </div>
+                    <a href="#ep-health" class="block py-1.5 px-3 text-sm text-gray-600 hover:text-blue-600">Health
+                        Check</a>
+                    <a href="#ep-lookup" class="block py-1.5 px-3 text-sm text-gray-600 hover:text-blue-600">Lookup
+                        Customer</a>
+                    <a href="#ep-categories" class="block py-1.5 px-3 text-sm text-gray-600 hover:text-blue-600">List
+                        Categories</a>
+                    <a href="#ep-products" class="block py-1.5 px-3 text-sm text-gray-600 hover:text-blue-600">List
+                        Products</a>
+                    <a href="#ep-search"
+                        class="block py-1.5 px-3 text-sm text-gray-600 hover:text-blue-600 flex items-center justify-between">Smart
+                        Search <span
+                            class="bg-yellow-100 text-yellow-700 text-[10px] px-1.5 py-0.5 rounded ml-2">AI</span></a>
+                    <a href="#ep-recommend"
+                        class="block py-1.5 px-3 text-sm text-gray-600 hover:text-blue-600 flex items-center justify-between">AI
+                        Recommend <span
+                            class="bg-red-100 text-red-700 text-[10px] px-1.5 py-0.5 rounded ml-2 font-bold">HOT</span></a>
+                    <div class="pt-2 pb-1">
+                        <span class="px-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Referensi</span>
+                    </div>
+                    <a href="#status-codes"
+                        class="block py-2 px-3 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md">Status
+                        Codes & Error</a>
+                    <a href="#troubleshooting"
+                        class="block py-2 px-3 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md">Troubleshooting</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <article class="flex-1 max-w-3xl space-y-12">
+
+            <!-- Intro -->
+            <section id="intro" class="prose prose-slate max-w-none">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-8">
+                    <p class="text-sm text-blue-800 m-0">Dokumen ini ditujukan bagi developer pihak ketiga untuk
+                        mengintegrasikan sistem dengan aplikasi Kasir Percetakan.</p>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 border-b pb-2 mb-4">1. Informasi Dasar</h2>
+                <ul class="space-y-2 list-none p-0">
+                    <li class="flex items-center gap-3"><span class="font-semibold w-28 text-gray-700">Base URL</span>
+                        <code
+                            class="bg-gray-100 text-pink-600 px-2 py-1 rounded text-sm">https://[domain-aplikasi-kasir]/api/v1</code>
+                    </li>
+                    <li class="flex items-center gap-3"><span class="font-semibold w-28 text-gray-700">Format
+                            Data</span> <span class="bg-gray-100 px-2 py-1 rounded text-sm text-gray-600">JSON</span>
+                    </li>
+                    <li class="flex items-center gap-3"><span class="font-semibold w-28 text-gray-700">Metode
+                            HTTP</span> <span class="method-badge-get">GET</span> <span
+                            class="text-sm text-gray-500">(Saat ini hanya GET)</span></li>
+                </ul>
+            </section>
+
+            <!-- Autentikasi -->
+            <section id="auth">
+                <h2 class="text-2xl font-bold text-gray-900 border-b pb-2 mb-4">2. Autentikasi</h2>
+                <p class="text-gray-600 mb-4">Setiap request <strong class="text-gray-900">WAJIB</strong> menyertakan
+                    API Key pada header HTTP. Silahkan hubungi Admin untuk generate API Key</p>
+
+                <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Header</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Nilai</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Deskripsi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-4 py-3 text-sm font-mono text-pink-600">X-API-Key</td>
+                                <td class="px-4 py-3 text-sm text-gray-600"><code
+                                        class="bg-gray-100 px-1 py-0.5 rounded">[API_KEY_ANDA]</code></td>
+                                <td class="px-4 py-3 text-sm text-gray-600">Kunci akses unik</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-sm font-mono text-pink-600">Accept</td>
+                                <td class="px-4 py-3 text-sm text-gray-600"><code
+                                        class="bg-gray-100 px-1 py-0.5 rounded">application/json</code></td>
+                                <td class="px-4 py-3 text-sm text-gray-600">Memastikan response format JSON</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Struktur Response -->
+            <section id="response">
+                <h2 class="text-2xl font-bold text-gray-900 border-b pb-2 mb-4">3. Struktur Response Dasar</h2>
+                <p class="text-gray-600 mb-4">Secara umum, response dari API mengikuti format standar berikut (misal: Customer Lookup dan List Product):</p>
+                <div class="rounded-lg overflow-hidden shadow-sm mb-4">
+                    <pre class="language-json"><code class="language-json">{
+  "status": "success" | "not_found" | "error",
+  "message": "Deskripsi singkat hasil request",
+  "data": { ... } | [ ... ] | null,
+  "meta": { ... } // Opsional, hanya muncul pada data berhalaman (pagination)
+}</code></pre>
+                </div>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg text-sm text-blue-800">
+                    <strong>Pengecualian:</strong> Endpoint <strong>Health Check</strong>, <strong>Smart Product Search</strong>, dan <strong>AI Recommend Engine</strong> memiliki struktur respons yang sedikit berbeda <em>(flat hierarchy dengan key seperti "success": true)</em> yang dioptimasi agar langsung dikonsumsi Frontend Chat interface / Agent AI. Silakan rujuk detail formatnya pada masing-masing endpoint di bawah.
+                </div>
+            </section>
+
+            <!-- Rate Limiting -->
+            <section id="rate-limit">
+                <h2 class="text-2xl font-bold text-gray-900 border-b pb-2 mb-4">4. Rate Limiting</h2>
+                <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+                    <ul class="space-y-3 m-0 list-none p-0 text-gray-600 text-sm">
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-yellow-500 shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span><strong>Limit:</strong> 60 request per menit per API Key.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                </path>
+                            </svg>
+                            <span><strong>Retry-After:</strong> Jika melampaui batas, server mengembalikan status <code
+                                    class="bg-gray-100 text-red-600 px-1 py-0.5 rounded">429 Too Many Requests</code>.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Endpoints -->
+            <section id="endpoints" class="space-y-8">
+                <h2 class="text-2xl font-bold text-gray-900 border-b pb-2 mb-6">5. Daftar Endpoint</h2>
+
+                <!-- Health Check -->
+                <div id="ep-health"
+                    class="endpoint-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div
+                        class="border-b border-gray-100 bg-gray-50 px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="text-lg font-bold text-gray-800 m-0">A. Health Check</h3>
+                        <div
+                            class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-md border border-gray-200 font-mono text-sm">
+                            <span class="method-badge-get">GET</span>
+                            <span class="text-gray-600">/health</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-sm text-gray-600 mb-4">Digunakan untuk memastikan konektivitas dan status API.
+                        </p>
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Response (200 OK)</h4>
+                        <pre class="language-json rounded-md m-0"><code class="language-json">{
+  "status": "ok",
+  "message": "Kasir Smart API aktif dan berjalan.",
+  "version": "1.2.0",
+  "package": "khalid/kasir-smart-api"
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Lookup -->
+                <div id="ep-lookup"
+                    class="endpoint-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div
+                        class="border-b border-gray-100 bg-gray-50 px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="text-lg font-bold text-gray-800 m-0">B. Lookup Customer by Phone</h3>
+                        <div
+                            class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-md border border-gray-200 font-mono text-sm">
+                            <span class="method-badge-get">GET</span>
+                            <span class="text-gray-600">/customers/lookup</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-sm text-gray-600 mb-4">Mencari data pelanggan berdasarkan nomor
+                            WhatsApp/Handphone.</p>
+
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Parameter URL</h4>
+                        <div class="overflow-x-auto border border-gray-200 rounded-md mb-4">
+                            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left font-medium text-gray-500">Parameter</th>
+                                        <th class="px-4 py-2 text-left font-medium text-gray-500">Wajib</th>
+                                        <th class="px-4 py-2 text-left font-medium text-gray-500">Deskripsi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-4 py-2 font-mono text-pink-600">phone</td>
+                                        <td class="px-4 py-2"><span
+                                                class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs">Ya</span>
+                                        </td>
+                                        <td class="px-4 py-2 text-gray-600">No HP pelanggan (Contoh: `08...`, `628...`,
+                                            `+628...`)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Sukses (200
+                                    OK)</h4>
+                                <pre class="language-json rounded-md m-0"><code class="language-json">{
+  "status": "success",
+  "message": "Customer ditemukan.",
+  "data": {
+    "name": "Khalid R",
+    "phone": "08123456789",
+    "email": "khaldir@example.com",
+    "address": "Jl. Merdeka No. 10",
+    "city": "Jakarta",
+    "gender": "L"
+  }
+}</code></pre>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">Gagal (404 Not
+                                    Found)</h4>
+                                <pre class="language-json rounded-md m-0"><code class="language-json">{
+  "status": "not_found",
+  "message": "Customer tidak ditemukan.",
+  "data": null
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- List Categories -->
+                <div id="ep-categories"
+                    class="endpoint-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div
+                        class="border-b border-gray-100 bg-gray-50 px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="text-lg font-bold text-gray-800 m-0">C. List Categories</h3>
+                        <div
+                            class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-md border border-gray-200 font-mono text-sm">
+                            <span class="method-badge-get">GET</span>
+                            <span class="text-gray-600">/products/categories</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-sm text-gray-600 mb-4">Mengambil daftar kategori beserta <strong
+                                class="text-gray-900">keyword sinonim</strong> yang harus digunakan AI untuk memetakan
+                            pertanyaan pelanggan ke kategori yang benar <strong>sebelum</strong> memanggil `/products`.
+                        </p>
+
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-md mb-4 text-sm">
+                            <h5 class="font-bold text-yellow-800 mb-2">Alur yang Benar untuk AI:</h5>
+                            <ol class="list-decimal pl-4 space-y-1 text-yellow-800">
+                                <li>Panggil `/products/categories` sekali saat inisiasi untuk melihat pola pemetaan.
+                                </li>
+                                <li>Cari kata yang diucapkan klien (misal: "spanduk") di field <code>keywords</code>
+                                    tiap kategori.</li>
+                                <li>Gunakan <code>id</code> kategori yang ditemukan sebagai filter pada `/products`.
+                                </li>
+                            </ol>
+                        </div>
+
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Response (200 OK)</h4>
+                        <pre class="language-json rounded-md m-0"><code class="language-json">{
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "name": "Outdoor",
+      "description": "Produk cetak OUTDOOR (luar ruangan)...",
+      "keywords": ["spanduk", "banner", "flexy", "outdoor", ...],
+      "price_type": "m2"
+    },
+    {
+      "id": 7,
+      "name": "Akrilik",
+      "description": "Produk Akrilik & Sablon...",
+      "keywords": ["akrilik", "acrylic", "sablon", "cetak dtf"],
+      "price_type": "cm2"
+    }
+  ]
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Products -->
+                <div id="ep-products"
+                    class="endpoint-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div
+                        class="border-b border-gray-100 bg-gray-50 px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="text-lg font-bold text-gray-800 m-0">D. List & Search Products</h3>
+                        <div
+                            class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-md border border-gray-200 font-mono text-sm">
+                            <span class="method-badge-get">GET</span>
+                            <span class="text-gray-600">/products</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-sm text-gray-600 mb-4">Mengambil daftar produk aktif. Perhatikan field
+                            <code>price_type</code> untuk perhitungan harga.</p>
+
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Parameter URL
+                            (Opsional)</h4>
+                        <div class="overflow-x-auto border border-gray-200 rounded-md mb-4">
+                            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left font-medium text-gray-500">Parameter</th>
+                                        <th class="px-3 py-2 text-left font-medium text-gray-500">Tipe</th>
+                                        <th class="px-3 py-2 text-left font-medium text-gray-500">Deskripsi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-3 py-2 font-mono text-pink-600 text-xs">search</td>
+                                        <td class="px-3 py-2 text-gray-500 text-xs">String</td>
+                                        <td class="px-3 py-2 text-gray-600 text-xs">Cari berdasarkan Judul, Barcode,
+                                            Kategori</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2 font-mono text-pink-600 text-xs">category</td>
+                                        <td class="px-3 py-2 text-gray-500 text-xs">Mixed</td>
+                                        <td class="px-3 py-2 text-gray-600 text-xs">Filter ID Kategori (angka) atau Nama
+                                            (teks)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2 font-mono text-pink-600 text-xs">per_page / page</td>
+                                        <td class="px-3 py-2 text-gray-500 text-xs">Integer</td>
+                                        <td class="px-3 py-2 text-gray-600 text-xs">Pagination kontrol (Max 100
+                                            per_page)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="bg-blue-50 border border-blue-100 rounded-md p-4 mb-4 text-sm">
+                            <h5 class="font-bold text-blue-800 mb-2">Logika Perhitungan Harga:</h5>
+                            <p class="text-blue-700 mb-2">Selalu baca `price_formula` pada respon. Secara umum:</p>
+                            <ul class="list-disc pl-5 space-y-1 text-blue-700">
+                                <li><strong>unit</strong>: <code>Total = Jumlah x Price</code></li>
+                                <li><strong>m2</strong>:
+                                    <code>Total = (P_cm / 100) x (L_cm / 100) x Jumlah x Price</code></li>
+                                <li><strong>cm2</strong>: <code>Total = P_cm x L_cm x Jumlah x Price</code></li>
+                            </ul>
+                        </div>
+
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Response (200 OK)</h4>
+                        <pre class="language-json rounded-md m-0" style="max-height: 250px;"><code class="language-json">{
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "category_name": "Outdoor",
+      "name": "Spanduk Glossy 280gr",
+      "price": 20000,
+      "price_type": "m2",
+      "price_formula": "(Panjang_cm / 100) * (Lebar_cm / 100) * Jumlah * Harga_Jual",
+      "unit": "PCS",
+      "is_custom_size": true,
+      "status": "aktif"
+    }
+  ],
+  "meta": { "current_page": 1, "total": 120 }
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Smart Search -->
+                <div id="ep-search"
+                    class="endpoint-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div
+                        class="border-t-4 border-yellow-400 bg-gray-50 px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 m-0">E. Smart Product Search</h3>
+                            <span
+                                class="inline-block mt-1 bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded font-semibold">AI
+                                Focused</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-md border border-gray-200 font-mono text-sm shadow-sm">
+                            <span class="method-badge-get">GET</span>
+                            <span class="text-gray-600">/products/search</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-sm text-gray-600 mb-4">Pencarian cerdas yang dioptimalkan untuk AI Chatbot.
+                            Mendukung <strong>typo tolerance, sinonim, dan implicit category detection.</strong></p>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Parameter</h4>
+                                <ul class="text-sm space-y-2 text-gray-600">
+                                    <li><code class="text-pink-600 font-bold">q</code> (Wajib): Kata kunci pencarian
+                                        (Misal: "baner ultah")</li>
+                                    <li><code class="text-pink-600 font-bold">per_page</code>: Jumlah hasil (Default 10)
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded border text-sm text-gray-600">
+                                <ul class="list-disc pl-4 space-y-1">
+                                    <li>"baner" &rarr; "banner" (Typo)</li>
+                                    <li>"mmt" &rarr; "spanduk" (Synonym)</li>
+                                    <li>"spanduk" &rarr; Prioritas "Outdoor"</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <pre class="language-json rounded-md m-0" style="max-height: 250px;"><code class="language-json">{
+  "success": true,
+  "query": "baner ultah",
+  "normalized_query": "banner ulang tahun",
+  "implied_category": "Outdoor",
+  "best_match": {
+    "id": 1,
+    "name": "Spanduk Glossy 280 Gsm",
+    "similarity_score": 92
+  },
+  "all_results": [ ... ]
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- AI Recommend -->
+                <div id="ep-recommend"
+                    class="endpoint-card bg-white rounded-xl shadow-lg border border-red-200 overflow-hidden ring-1 ring-red-50">
+                    <div
+                        class="border-t-4 border-red-500 bg-gradient-to-r from-red-50 to-white px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 m-0">F. AI Recommendation Engine</h3>
+                            <span
+                                class="inline-block mt-1 bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wide border border-red-200">Sangat
+                                Disarankan</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-md border border-gray-200 font-mono text-sm shadow-sm ring-1 ring-black/5">
+                            <span class="method-badge-get">GET</span>
+                            <span class="text-gray-600">/ai/recommend</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-sm text-gray-700 mb-4 leading-relaxed">Endpoint ini <strong>otomatis membaca
+                                pesan bahasa manusia (natural language)</strong>, mendeteksi tipe produk, mengekstrak
+                            dimensi ukuran (misal: "3x1 meter"), dan menghitung harga asli secara presisi. Sangat
+                            disarankan dipakai oleh Agent AI.</p>
+
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Parameter Utama</h4>
+                        <div class="bg-gray-50 border border-gray-200 rounded p-3 mb-4 flex items-start gap-3">
+                            <code
+                                class="font-bold text-pink-600 bg-red-50 px-1 py-0.5 rounded text-sm mt-0.5">message</code>
+                            <p class="text-sm text-gray-600 m-0">Pesan mentah pengguna. <br><em
+                                    class="text-gray-500">Contoh: "Kak mau cetak spanduk ukuran 3x1 meter. Berapa
+                                    harganya ya?"</em></p>
+                        </div>
+
+                        <div class="bg-red-50 border border-red-100 p-4 rounded-md mb-4 text-sm text-red-900">
+                            <strong>Feedback AI:</strong> Endpoint ini menyediakan <code
+                                class="bg-white px-1 py-0.5 rounded text-red-600 font-bold border border-red-100">ai_instruction</code>
+                            yang berisi prompt otomatis yang bisa langsung diteruskan ke LLM Anda agar jawabannya 100%
+                            akurat.
+                        </div>
+
+                        <pre class="language-json rounded-md m-0" style="max-height: 350px;"><code class="language-json">{
+  "success": true,
+  "customer_message": "kak mau cetak spanduk ukuran 3x1 meter bisa ga?",
+  "detected_intent": "spanduk",
+  "detected_size": {
+      "width": 3,
+      "height": 1,
+      "unit": "meter",
+      "area_m2": 3,
+      "display": "3 × 1 meter"
+  },
+  "price_type": "m2",
+  "price_examples": [
+      {
+          "product_name": "Spanduk Glossy 280 Gsm",
+          "calculation": "3 m² × Rp 20.000 = Rp 60.000",
+          "total_price": 60000
+      }
+  ],
+  "ai_instruction": "INSTRUKSI UNTUK AI:\nPelanggan bertanya tentang produk kategori Outdoor..."
+}</code></pre>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Status Codes & Error -->
+            <section id="status-codes">
+                <h2 class="text-2xl font-bold text-gray-900 border-b pb-2 mb-4">6. Kode Status HTTP & Error</h2>
+                <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                                    Kode</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-40">
+                                    Status</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Deskripsi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-green-600">200</td>
+                                <td class="px-4 py-3 text-gray-700">OK</td>
+                                <td class="px-4 py-3 text-gray-600">Request berhasil diproses.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-orange-500">401</td>
+                                <td class="px-4 py-3 text-gray-700">Unauthorized</td>
+                                <td class="px-4 py-3 text-gray-600">API Key salah, kadaluarsa, atau kosong.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-gray-500">404</td>
+                                <td class="px-4 py-3 text-gray-700">Not Found</td>
+                                <td class="px-4 py-3 text-gray-600">Data tidak ditemukan.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-yellow-600">422</td>
+                                <td class="px-4 py-3 text-gray-700">Unprocessable</td>
+                                <td class="px-4 py-3 text-gray-600">Validasi parameter input gagal (contoh: format nomor
+                                    salah).</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-red-500">429</td>
+                                <td class="px-4 py-3 text-gray-700">Too Many Requests</td>
+                                <td class="px-4 py-3 text-gray-600">Melebihi limit rate API (60 req/menit).</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-red-700">500</td>
+                                <td class="px-4 py-3 text-gray-700">Server Error</td>
+                                <td class="px-4 py-3 text-gray-600">Kesalahan internal server.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Troubleshooting -->
+            <section id="troubleshooting">
+                <h2 class="text-2xl font-bold text-gray-900 border-b pb-2 mb-4">7. Troubleshooting & Kontak</h2>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Jika terjadi kendala integrasi, periksa hal
+                        berikut sebelum menghubungi admin:</p>
+                    <ul class="space-y-2 list-disc pl-5 text-sm text-gray-600">
+                        <li>Pastikan <code
+                                class="text-pink-600 font-mono text-xs bg-gray-50 px-1 rounded">Base URL</code> dan
+                            routing domain aplikasi sudah benar (tidak typo).</li>
+                        <li>Pastikan header <code class="bg-gray-50 px-1 rounded text-xs font-mono">X-API-Key</code>
+                            dikirim tanpa tambahan spasi.</li>
+                        <li>Format nomor HP pada endpoint lookup idealnya angka (min 9 digit).</li>
+                        <li>Cek konfigurasi HTTP Client Anda agar selalu menyematkan header <code
+                                class="bg-gray-50 px-1 rounded text-xs font-mono">Accept: application/json</code>.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <footer class="pt-8 pb-12 text-center text-sm text-gray-400">
+                &copy; 2024 Kasir Percetakan Team. All rights reserved.
+            </footer>
+
+        </article>
+    </main>
+
+    <!-- Prism JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+
+    <!-- Smooth Scroll Script -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const topPos = target.getBoundingClientRect().top + window.scrollY - 100; // offset for sticky header
+                    window.scrollTo({
+                        top: topPos,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
